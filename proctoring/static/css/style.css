@@ -1,0 +1,101 @@
+body{
+font-family: sans-serif;
+color: rgb(137, 190, 101);
+}
+
+.progressStep{
+  margin: 30px auto;
+}
+
+.progressStep img{
+  width:50px;
+}
+
+.progressStep ul{
+  text-align: center;
+}
+
+.progressStep ul>li{
+  display: inline-block;
+  width: 200px;
+  position: relative;
+}
+
+.progressStep ul>li .fa{
+  background: rgb(240, 240, 240);
+  font-size: 19px;
+  padding: 5px;
+  color: #fff;
+  border-radius: 50%;
+  }
+
+  .progressStep ul>li .fa::after{
+    content: '';
+    background: #ccc;
+    height: 5px;
+    width: 200px;
+    display: block;
+    position: absolute;
+    left: 0px;
+    top: 62px;
+    z-index: -1;
+    }
+
+
+    .progressStep ul>li .active::after{
+
+      background: rgb(54, 223, 54)!important;
+     
+      }
+
+    li .active{
+      color: rgb(255, 255, 255)!important;
+      background: rgb(54, 223, 54)!important;
+    }
+
+    .imageVerification{
+      position: relative;
+    left: -6px;
+    top: -10px;
+    width: 259px;
+    height: 268px;
+    }
+
+    .canvasVerification{
+      position: absolute;
+      height: 250px;
+      width: 250px;
+      border-radius: 48%;
+    }
+
+    .VerficationPart{
+      text-align: center;
+    }
+
+    .trueMan{
+      position: relative;
+    right: -56%;
+    top: 214px;
+    color: rgb(39, 212, 23);
+    z-index: 9;
+    font-size: 39px;
+    border-radius: 78px;
+    width: 60px;
+    background: #f1f1f1;
+    height: 60px;
+    }
+
+    .falseMan{
+      position: relative;
+    right: -56%;
+    top: 214px;
+    color: red;
+    z-index: 9;
+    font-size: 39px;
+    border-radius: 78px;
+    width: 60px;
+    background: #f1f1f1;
+    height: 60px;
+    }
+
+    

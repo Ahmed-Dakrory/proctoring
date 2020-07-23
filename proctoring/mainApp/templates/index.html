@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+  <head>
+    {%load static%}
+
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+   
+<script src="{% static 'js/jquery-3.5.0.min.js' %}"></script>
+
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}">
+
+  </head>
+
+  <body>
+
+    <!-- start of header-->
+<div>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <a class="navbar-brand" href="#">Navbar</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+    
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/register">Register</a>
+          </li>
+          {% if not userProfile.user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link" id="loginShowButton" href="#">Login</a>
+          </li>
+          {%endif%}
+
+         
+          {% if userProfile.user.is_authenticated %}
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              {{userProfile.user}} # {{userProfile.user.pk}}
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <a class="dropdown-item" href="#">My Profile</a>
+              <a class="dropdown-item" href="#">Another action</a>
+              
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="/logout">Logout</a>
+              
+            </div>
+          </li>
+          {%endif%}
+        </ul>
+ 
+        
+      </div>
+    </nav>
+  </div>
+
+   <!-- end of header-->
+
+
+
+   
+<link rel="stylesheet" type="text/css" href="{% static 'css/login.css' %}">
+<script src="{% static 'js/login.js' %}"></script> 
+
+
+
+
+<div id="id01" class="modal-Login ">
+  
+    <form class="modal-content-Login animate-Login" action="/auth" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="localIp" id="localIp">
+        <input type="hidden" name="globalIp" id="globalIp">
+      <div class="imgcontainer-Login">
+        <span onclick="document.getElementById('id01').style.display='none'" class="close-Login" title="Close Modal">&times;</span>
+        <img src="/static/img/img_avatar2.png" alt="Avatar" class="avatar-Login">
+      </div>
+  
+      <div class="container-Login">
+        <label for="username"><b>Username</b></label>
+        <input type="text" class="input-Login" placeholder="Enter Username" name="username" required>
+  
+        <label for="password"><b>Password</b></label>
+        <input type="password" class="input-Login" placeholder="Enter Password" name="password" required>
+          
+        <button class="button-Login" type="submit">Login</button>
+        <label>
+          <input type="checkbox" checked="checked" name="remember"> Remember me
+        </label>
+      </div>
+  
+      <div class="container-Login" style="background-color:#f1f1f1">
+        <button type="button" onclick="document.getElementById('id01').style.display='none'" class="cancelbtn-Login">Cancel</button>
+        <span class="psw-Login">Forgot <a href="#">password?</a></span>
+      </div>
+    </form>
+  </div>
+
+<!-- Horizontal Steppers -->
+
+  <div class="progressStep">
+
+    <!-- Stepers Wrapper -->
+    <ul class="">
+
+      <!-- First Step -->
+      <li class="">
+        <img src="static/img/speaker.png"><br>
+        <i id="speaker_i" class="fa fa-refresh"></i>
+        <p>Speaker</p>
+
+      </li>
+
+      <!-- Second Step -->
+      <li class="">
+        <img src="static/img/mic.png"><br>
+        <i id="mic_i" class="fa fa-refresh"></i>
+        <p>Microphone</p>
+      </li>
+
+      <!-- Third Step -->
+      <li class="warning">
+        <img src="static/img/camera.png"><br>
+        <i id="camera_i" class="fa fa-refresh"></i>
+        <p>Camera</p>
+      </li>
+
+    </ul>
+    <!-- /.Stepers Wrapper -->
+
+  </div>
+
+  <button id="devices_check">Check Devices</button>
+
+  <div  class="camera">
+    <video style="display:none;" id="video">Video stream not available.</video>
+    <button id="startbutton">Take photo</button>
+    <button id="endbutton">end</button>
+    <div id="imgData"></div>
+  </div>
+
+  <div class="VerficationPart">
+    <div id="verficationIDiv">
+      <i id="verficationI" class="fa fa-right"></i>
+    </div>
+    <canvas id="canvas" class="canvasVerification">
+    </canvas>
+    <img class="imageVerification" src="/static/img/Face-Placeholder.png"/>
+  </div>
+  
+ <button id="CloseExam" onclick="windowClose();" type="button">Close</button>
+
+<!-- /.Horizontal Steppers -->
+
+
+
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+    <script>
+   function windowClose() {
+window.open('','_parent','');
+window.close();
+}
+
+
+/**
+ * Get the user IP throught the webkitRTCPeerConnection
+ * @param onNewIP {Function} listener function to expose the IP locally
+ * @return undefined
+ */
+ function getUserIP(onNewIP) { //  onNewIp - your listener function for new IPs
+    //compatibility for firefox and chrome
+    var myPeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection;
+    var pc = new myPeerConnection({
+        iceServers: []
+    }),
+    noop = function() {},
+    localIPs = {},
+    ipRegex = /([0-9]{1,3}(\.[0-9]{1,3}){3}|[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7})/g,
+    key;
+
+    function iterateIP(ip) {
+        if (!localIPs[ip]) onNewIP(ip);
+        localIPs[ip] = true;
+    }
+
+     //create a bogus data channel
+    pc.createDataChannel("");
+
+    // create offer and set local description
+    pc.createOffer().then(function(sdp) {
+        sdp.sdp.split('\n').forEach(function(line) {
+            if (line.indexOf('candidate') < 0) return;
+            line.match(ipRegex).forEach(iterateIP);
+        });
+        
+        pc.setLocalDescription(sdp, noop, noop);
+    }).catch(function(reason) {
+        // An error occurred, so handle the failure to connect
+    });
+
+    //listen for candidate events
+    pc.onicecandidate = function(ice) {
+        if (!ice || !ice.candidate || !ice.candidate.candidate || !ice.candidate.candidate.match(ipRegex)) return;
+        ice.candidate.candidate.match(ipRegex).forEach(iterateIP);
+    };
+}
+
+// Usage
+
+getUserIP(function(ip){
+        $("#localIp").val(ip);
+        $('#localIp').attr('value',ip);
+});
+
+
+$.ajax({
+        type: 'GET',
+        url: 'https://api.ipify.org',
+        cache: false,
+        success: function(result) {            
+            $("#globalIp").val(result);
+            $('#globalIp').attr('value',result);
+        },
+    }); 
+    </script>
+   </body>
+</html>

@@ -1,0 +1,120 @@
+<html>
+
+    {%load static%}
+
+    <head>
+        
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}">
+    </head>
+<body>
+
+    <form method="POST" novalidate>
+        {% csrf_token %}
+
+        <input type="hidden" name="localIp" id="localIp">
+        <input type="hidden" name="globalIp" id="globalIp">
+        <div class="container">
+            <div class="row">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    User Registeration
+                </a>
+            </div>
+            <div class="row">
+                <div class="col-md-5">
+                    <input type="text" class="form-control mt-3 mb-3" value='' name="username" placeholder="UserName" required> 
+                </div>
+                <div class="col-md-5">
+                    <input type="text" class="form-control mt-3 mb-3" value='' name="firstname" placeholder="firstname" required>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-5">
+                    <input type="text" class="form-control mt-3 mb-3" value='' name="lastname" placeholder="lastname" required> 
+                </div>
+                <div class="col-md-5">
+                    <input type="password" class="form-control mt-3 mb-3" value='' name="password" placeholder="password" required> 
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-5">
+                    <input type="email" class="form-control mt-3 mb-3" value='' name="email" placeholder="email" required> 
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-5">
+                    <button class="btn btn-outline-success" type="submit">Save User</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</body>
+
+
+<script src="{% static 'js/jquery-3.5.0.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+
+
+<script>
+/**
+ * Get the user IP throught the webkitRTCPeerConnection
+ * @param onNewIP {Function} listener function to expose the IP locally
+ * @return undefined
+ */
+ function getUserIP(onNewIP) { //  onNewIp - your listener function for new IPs
+    //compatibility for firefox and chrome
+    var myPeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection;
+    var pc = new myPeerConnection({
+        iceServers: []
+    }),
+    noop = function() {},
+    localIPs = {},
+    ipRegex = /([0-9]{1,3}(\.[0-9]{1,3}){3}|[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7})/g,
+    key;
+
+    function iterateIP(ip) {
+        if (!localIPs[ip]) onNewIP(ip);
+        localIPs[ip] = true;
+    }
+
+     //create a bogus data channel
+    pc.createDataChannel("");
+
+    // create offer and set local description
+    pc.createOffer().then(function(sdp) {
+        sdp.sdp.split('\n').forEach(function(line) {
+            if (line.indexOf('candidate') < 0) return;
+            line.match(ipRegex).forEach(iterateIP);
+        });
+        
+        pc.setLocalDescription(sdp, noop, noop);
+    }).catch(function(reason) {
+        // An error occurred, so handle the failure to connect
+    });
+
+    //listen for candidate events
+    pc.onicecandidate = function(ice) {
+        if (!ice || !ice.candidate || !ice.candidate.candidate || !ice.candidate.candidate.match(ipRegex)) return;
+        ice.candidate.candidate.match(ipRegex).forEach(iterateIP);
+    };
+}
+
+// Usage
+
+getUserIP(function(ip){
+        $("#localIp").val(ip);
+        $('#localIp').attr('value',ip);
+});
+
+
+$.ajax({
+        type: 'GET',
+        url: 'https://api.ipify.org',
+        cache: false,
+        success: function(result) {            
+            $("#globalIp").val(result);
+            $('#globalIp').attr('value',result);
+        },
+    }); 
+</script>
+</html>
